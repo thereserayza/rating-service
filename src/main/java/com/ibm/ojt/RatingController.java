@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,7 @@ public class RatingController {
 		return mongoTemplate.findAll(Rating.class, "rating");
 	}
 	
-	@PostMapping
+	@PostMapping(consumes=MediaType.APPLICATION_JSON_VALUE)
 	public void saveRating(@RequestBody Rating rating) {
 		Query query = new Query().addCriteria(Criteria.where("prodcode").is(rating.getProdcode()).and("customerId").is(rating.getCustomerId()));
 		Rating _rating = mongoTemplate.findOne(query, Rating.class, "rating");
@@ -42,7 +43,7 @@ public class RatingController {
 		}
 	}
 	
-	@PutMapping
+	@PutMapping(consumes=MediaType.APPLICATION_JSON_VALUE)
 	public void updateRating(@RequestBody Rating rating) {
 		Query query = new Query().addCriteria(Criteria.where("prodcode").is(rating.getProdcode()).and("customerId").is(rating.getCustomerId()));
 		Rating _rating = mongoTemplate.findOne(query, Rating.class, "rating");
