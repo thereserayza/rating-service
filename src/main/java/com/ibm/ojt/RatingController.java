@@ -55,19 +55,31 @@ public class RatingController {
 	
 	@GetMapping("/avg/{prodcode}")
 	public double getAvgRating(@PathVariable String prodcode) {
+		double avgRating;
 		Criteria prodCriteria = Criteria.where("prodcode").is(prodcode);
-		Aggregation agg = Aggregation.newAggregation(Aggregation.match(prodCriteria), Aggregation.group().avg("rate").as("avgRating"));
-		AggregationResults<DBObject> results = mongoTemplate.aggregate(agg, "rating", DBObject.class);
-		double avgRating = Double.valueOf(results.getUniqueMappedResult().get("avgRating").toString());
+		List<Rating> list = mongoTemplate.find(new Query().addCriteria(prodCriteria), Rating.class, "rating");
+		if (list.isEmpty()) {
+			avgRating = 0;
+		} else {
+			Aggregation agg = Aggregation.newAggregation(Aggregation.match(prodCriteria), Aggregation.group().avg("rate").as("avgRating"));
+			AggregationResults<DBObject> results = mongoTemplate.aggregate(agg, "rating", DBObject.class);
+			avgRating = Double.valueOf(results.getUniqueMappedResult().get("avgRating").toString());
+		}
 		return avgRating;
 	}
 	
 	@GetMapping("/count/{prodcode}")
 	public int getRateCount(@PathVariable String prodcode) {
+		int rateCount;
 		Criteria prodCriteria = Criteria.where("prodcode").is(prodcode);
-		Aggregation agg = Aggregation.newAggregation(Aggregation.match(prodCriteria), Aggregation.group().count().as("rateCount"));
-		AggregationResults<DBObject> results = mongoTemplate.aggregate(agg, "rating", DBObject.class);
-		int rateCount = Integer.valueOf(results.getUniqueMappedResult().get("rateCount").toString());
+		List<Rating> list = mongoTemplate.find(new Query().addCriteria(prodCriteria), Rating.class, "rating");
+		if (list.isEmpty()) {
+			rateCount = 0;
+		} else {
+			Aggregation agg = Aggregation.newAggregation(Aggregation.match(prodCriteria), Aggregation.group().count().as("rateCount"));
+			AggregationResults<DBObject> results = mongoTemplate.aggregate(agg, "rating", DBObject.class);
+			rateCount = Integer.valueOf(results.getUniqueMappedResult().get("rateCount").toString());
+		}
 		return rateCount;
 	}
 	
